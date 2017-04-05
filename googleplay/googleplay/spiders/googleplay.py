@@ -31,7 +31,10 @@ class GoogleSpider(CrawlSpider):
     rules = [
         Rule(LinkExtractor(allow=("https://play\.google\.com/store/apps/details", )),
              callback='parse_app', follow=True),
-    ] # Régle de la spider, le callback ava aller appeler la fonction parse_app
+    ]
+    #rules: https://doc.scrapy.org/en/latest/topics/spiders.html?highlight=rules#crawling-rules
+    #LinkExtractor:  https://doc.scrapy.org/en/latest/topics/link-extractors.html
+    # callback: va aller appeler la fonction parse_app
 
     # Init
     def __init__(self, local = None, *args, **kwargs):
@@ -45,6 +48,7 @@ class GoogleSpider(CrawlSpider):
     """
     def parse_app(self, response):
         # le dictionnaires des valeures authorisé est défini le fichier items.py
+        #Dictionnaire
         item = {}
         item['url'] = response.url
 
@@ -55,6 +59,8 @@ class GoogleSpider(CrawlSpider):
             item['app_id'] = ''
 
         # utilsiation du XPATH pour extraire le données
+        #comment trouver le XPATH: https://www.youtube.com/watch?v=ohY815wUz9o
+        #Tuto sur Youtube: https://www.youtube.com/watch?v=aaN2J6JGv6U
         rate_count = response.xpath('//span[@class="rating-count"]/text()')
         if rate_count:
             rate_count = rate_count.extract()[0].strip().replace(',', '')
@@ -92,7 +98,7 @@ class GoogleSpider(CrawlSpider):
 
         #On insert la data dans Elasticsearch
         self.insertIntoES(item)
-        yield item
+        #yield item
 
     def spider_closed(self, reason):
             """
